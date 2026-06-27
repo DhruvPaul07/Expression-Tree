@@ -1,0 +1,168 @@
+ENode.java:
+----------
+public class ENode {
+    public char data;
+    ENode left;
+    ENode right;
+    public int value;
+    
+    // public ENode() {
+    //     data = null;
+    //     value = 0;
+    // }
+    public ENode(char d) {
+        data = d;
+        if(d == '+' || d == '-' || d == '*') {
+            
+        }
+        else {
+            value = Character.getNumericValue(d);
+            left = null;
+            right = null;
+        }
+    }
+    public char getData() {
+        return data;
+    }
+    public int getValue() {
+        return value;
+    }
+    public void setValue(int a) {
+        value = a;
+    }
+}
+
+ETree.java:
+----------
+public class ETree {
+    public ENode root;
+    public int treeCount;
+    int res;
+    int current;
+    String input;
+    int len;
+
+    public ETree(String a) {
+        root = null;
+        input = a;
+        current = 0;
+        len = input.length();
+        // for(int i = 0; i < len; i++) {
+        //     this.insert(input.charAt(i));
+        // }
+        //root = calculate(input);
+    }
+    public ENode insert() {
+        System.out.println(current);
+       // char a = input.charAt(current++);
+        // ENode x = new ENode(a);
+        if(current >= len) {
+            return null;
+        }
+        char a = input.charAt(current++);
+        ENode x = new ENode(a);
+        if(x.getData() == 'f' || x.getData() == 'n') {
+            x.left = insert();
+            x.right = null;
+        }
+        else if(checkOperator(x) == true) {
+            x.left = insert();
+            x.right = insert();
+        }
+        if(x.left != null || x.right != null) {
+            if(x.data == '+') {
+                x.value = x.left.value + x.right.value;
+            }
+            else if(x.data == '-') {
+                x.value = x.left.value - x.right.value;
+            }
+            else if(x.data == '*') {
+                x.value = x.left.value * x.right.value;
+            }
+            else if(x.data == 'c') {
+                x.value = (x.left.value % x.right.value) + (x.left.value/x.right.value);
+            }
+            else if(x.data == 'h') {
+                double hyp = Math.pow(x.left.value,2) + Math.pow(x.right.value,2);
+                hyp = Math.sqrt(hyp);
+                x.value = (int)(hyp);
+            }
+            else if(x.data == 'n') {
+                x.value = -1 * x.left.value;
+                //x.right = null;
+            }
+            else if(x.data == 'f') {
+                // x.value = x.left.value;
+                // int cond = x.left.value;
+                // if(input.substring(input.indexOf('f')).length() >= 3 && checkOperator(new ENode(input.charAt(input.indexOf('f')+2))) == false) {
+                //     x.value = x.right.value + 10;
+                //     cond = x.right.value+10;
+                // }
+                x.value = x.left.value;
+               // x.right.value = 0;
+                int cond = x.left.value;
+                for(int i = 2; i < cond; i++) {
+                    x.value*= i;
+                }
+                //x.right = null;
+            }
+        }
+        System.out.println("X-Value: " + x.value);
+        return x;
+    }
+    public boolean checkOperator(ENode a) {
+        if(a.getData() == '+' || a.getData() == '-' || a.getData() == '*' || a.getData() == 'c' || a.getData() == 'h' || a.getData() == 'n' || a.getData() == 'f') {
+            return true;
+        }
+        return false;
+    }
+    public void prefix(ENode b) {
+        System.out.print(b.data + " ");
+        if(b.left != null) {
+            prefix(b.left);
+        }
+        if(b.right != null) {
+            prefix(b.right);
+        }
+    }
+    public void infix(ENode b) {
+        if(b.left != null) {
+            infix(b.left);
+        }
+        System.out.print(b.data + " ");
+        if(b.right != null) {
+            infix(b.right);
+        }
+    }
+    public void postfix(ENode b) {
+        if(b.left != null) {
+            postfix(b.left);
+        }
+        if(b.right != null) {
+            postfix(b.right);
+        }
+        System.out.print(b.data + " ");
+    }
+}
+
+MyProgram.java:
+--------------
+import java.util.Scanner;
+public class MyProgram
+{
+    public static void main(String[] args)
+    {
+        Scanner input = new Scanner(System.in);
+        System.out.println("Enter an expression:");
+        String y = input.next();
+        ETree x = new ETree(y);
+        x.root = x.insert();
+        System.out.println("Result: " + x.root.value);
+        // x.prefix(x.root);
+        // System.out.println();
+        // x.infix(x.root);
+        // System.out.println();
+        // x.postfix(x.root);
+    }
+}
+
